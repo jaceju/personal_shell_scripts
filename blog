@@ -1,0 +1,49 @@
+#!/bin/bash
+# Author: Hsin-Yi Chen <ossug.hychen AT gmail.com>
+# Modified: Jace Ju
+# http://hychen.wuweig.org/blog/2011/11/13/huan-dao-octopress/
+ERRMSG_WRONGDIR='You are not under octopress directory.'
+[ ! -f _config.yml ] && echo ${ERRMSG_WRONGDIR} && exit
+
+BLOGDIR=${PWD}
+
+# Deploy contents
+deploy () {
+  bundle exec rake gen_deploy
+}
+
+# Upgrade octopress source
+update () {
+  echo 'Upgrading octopress source...'
+  mv _config.yml _config.old.yml
+  git pull octopress master
+  bundle install
+  bundle exec rake update_source
+  bundle exec rake update_style
+  [ -f _config.yml ] && mv _config.yml _config.new.yml
+  mv _config.old.yml _config.yml
+}
+
+# Launch preview server
+# @param: post title
+preview () {
+  [ ! $1 == "" ] && rake isolate["$1"]
+  bundle exec rake preview
+}
+
+# Start to write new post
+# @param: post title
+post () {
+  local title=${1?"new post"}
+  bundle exec rake new_post["${title}"]
+}
+
+# Main
+# ----
+actions="post update preview deploy"
+action=${1?"requirs action!, avaliable actions are ${actions}"}
+
+# run action
+shift
+${action} $@
+

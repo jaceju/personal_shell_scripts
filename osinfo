@@ -1,0 +1,246 @@
+#!/bin/sh
+#---------------------------------------------------------------
+# Project         : hardware4linux.info
+# File            : osinfo
+# Author          : Frederic Lepied
+# Created On      : Thu Feb  2 09:03:03 2006
+# Purpose         : return the os name, version and arch
+# License         : GPL
+#---------------------------------------------------------------
+
+prog=$0
+
+xml=0
+name=0
+arch=0
+rel=0
+knl=0
+all=1
+
+usage() {
+    echo "`basename $prog` [-x] [-n] [-a] [-r] [-h] [-t <dir>]" 1>&2
+    echo "  Display operating system informations. Options:" 1>&2
+    echo "    -x: output in xml format" 1>&2
+    echo "    -n: display name info" 1>&2
+    echo "    -a: display arch info" 1>&2
+    echo "    -r: display release info" 1>&2
+    echo "    -k: display kernel version" 1>&2
+    echo "    -t <dir>: use <dir> as the root of the filesystem" 1>&2
+    echo "    -h: display this help message" 1>&2
+    echo "    -v: display version" 1>&2
+}
+
+version() {
+    echo '1.9'
+}
+
+top=
+
+while getopts hxnarkvt: arg; do
+    case $arg in
+	x) xml=1;all=0;;
+	n) name=1;all=0;;
+	a) arch=1;all=0;;
+	r) rel=1;all=0;;
+	k) knl=1;all=0;;
+	h) usage; exit 0;;
+	v) version; exit 0;;
+	t) top="$OPTARG";;
+	*) usage; exit 1;;
+    esac
+done
+
+# tested on:
+# Mandriva Linux release 2006.0 on x86_64
+if [ -r $top/etc/mandrake-release ]; then
+    n=`sed 's/\(.*\) release.*/\1/' < $top/etc/mandrake-release`
+    a=`sed 's/.* for \(.*\)/\1/' < $top/etc/mandrake-release`
+    r=`sed 's/.* release \([0-9.]*\).*/\1/' < $top/etc/mandrake-release`
+# tested on:
+elif [ -r $top/etc/puppyversion ]; then
+    n="Puppy Linux"
+    r=`sed 's/\([0-9]*\)\([0-9][0-9]\)/\1.\2/' < $top/etc/puppyversion`
+# tested on:
+elif [ -r $top/etc/knoppix-version ]; then
+    r=`sed 's/^\([0-9.]*\) .*/\1/' < $top/etc/knoppix-version`
+    n=Knoppix
+# tested on:
+elif [ -r $top/etc/pld-release ]; then
+    r=`sed 's/^\([0-9.]*\) .*/\1/' < $top/etc/pld-release`
+    n=`sed 's/^[0-9.]* *\([^(]*\) .*/\1/' < $top/etc/pld-release`
+# tested on:
+elif [ -r $top/etc/pardus-release ]; then
+    n=`sed 's/\([^0-9.]*\) [0-9.]*.*/\1/' < $top/etc/pardus-release`
+    r=`sed 's/.* \([0-9.]*\.[0-9.]*\).*/\1/' < $top/etc/pardus-release`
+# tested on:
+# Xandros Server 1.0
+# Xandros Desktop OS 4.0 Home Premium Edition
+elif [ -r $top/etc/xandros-desktop-version ]; then
+    n=`grep -a ^Version $top/etc/xandros-desktop-version | sed 's/^Version: \([a-zA-Z ]*\) [0-9]*\.[0-9]*\(.*\)/\1\2/'`
+    r=`grep -a ^Version $top/etc/xandros-desktop-version | sed 's/^Version: [a-zA-Z ]*\([0-9]*\.[0-9]*\).*/\1/'`
+# tested on:
+# Ubuntu release 6.06 on i386 (2.6.15-25-686)
+# Ubuntu release 5.10 on i386 (2.6.12-10-386)
+# Debian release 3.1 on i386 (2.6.8-2-686)
+# Debian release lenny/sid on i386 (2.6.21.1dedibox-r7)
+# Ubuntu release 7.04 on i386 (2.6.20-16-generic)
+elif [ -r $top/etc/debian_version ]; then
+    n=Debian
+    r=`cat $top/etc/debian_version`
+
+    # Handle Ubuntu
+    if [ "$r" = testing/unstable ]; then
+	n=`head -1 $top/etc/issue | sed 's/\(.*\) [0-9].*/\1/'`
+	r=`head -1 $top/etc/issue | sed 's/[^0-9]* \([0-9.]*\).*/\1/'`
+    elif [ -r $top/etc/lsb-release ]; then
+	. $top/etc/lsb-release
+	[ "$DISTRIB_ID" ] && n="$DISTRIB_ID"
+	[ "$DISTRIB_RELEASE" ] && r="$DISTRIB_RELEASE"
+    fi
+# tested on:
+# Gentoo release 1.6.14 on i386 (2.6.16-gentoo-r7)
+# Gentoo release 1.12.0_pre19 on i386 (2.6.16-mm1-ubik)
+# Gentoo release 1.12.1 on AuthenticAMD (2.6.16-suspend2-r8)
+elif [ -r $top/etc/gentoo-release ]; then
+    n=Gentoo
+    r=`sed 's/.* version \([0-9.]*\)/\1/' < $top/etc/gentoo-release`
+# tested on:
+elif [ -r $top/etc/arch-release ]; then
+    n="Arch Linux"
+    r=`sed 's/.* \([0-9.]*\) .*/\1/' < $top/etc/arch-release`
+    if [ -z "$r" ]; then
+	r=`grep Arch $top/etc/issue | sed -r 's/^Arch Linux \(([^\)]*)\).*$/\1/'`
+    fi
+    if [ -z "$r" ]; then
+	r=`pacman -Qi pacman | grep "^Version " | sed 's/^.*: \(.*\)$/\1/'`
+    fi
+    if [ -z "$r" ]; then
+	r=Unspecified
+    fi
+# tested on:
+elif [ -r $top/etc/slackware-version ]; then
+    n=`sed 's/\([^0-9.]*\) [0-9.]*.*/\1/' < $top/etc/slackware-version`
+    r=`sed 's/.* \([0-9.]*\.[0-9.]*\).*/\1/' < $top/etc/slackware-version`
+    a=`sed 's/.*(\(.*\)).*/\1/' < $top/etc/slackware-version`
+# tested on:
+elif [ -r $top/etc/zenwalk-version ]; then
+    n="Zenwalk"
+    r=`sed 's/.* \([0-9.]*\).*/\1/' < $top/etc/zenwalk-version`
+# tested on:
+# SUSE LINUX Enterprise Server release 9 on ppc
+# SUSE LINUX release 10.0 on i586 (2.6.13-15-default)
+elif [ -r $top/etc/SuSE-release ]; then
+    n=`head -1 $top/etc/SuSE-release | sed 's/\(.*\) [0-9].*/\1/'`
+    a=`head -1 $top/etc/SuSE-release | sed 's/.*(\(.*\)).*/\1/'`
+    r=`grep VERSION $top/etc/SuSE-release | sed 's/VERSION = \(.*\)/\1/'`
+# tested on:
+# Fedora Core release 3 on x86_64
+# Fedora Core release 4 on ppc (2.6.16-1.2115_FC4)
+# Fedora Core release 5 on i386 (2.6.17-1.2139_FC5)
+elif [ -r $top/etc/redhat-release ]; then
+    n=`sed 's/\(.*\) release.*/\1/' < $top/etc/redhat-release`
+    r=`sed 's/.* release \([0-9.]*\).*/\1/' < $top/etc/redhat-release`
+# tested on:
+# Solaris release 9 on x86
+elif [ -r $top/etc/release ]; then
+    n=`head -1 $top/etc/release | sed 's/ *\([^0-9]*\) [0-9].*/\1/'`
+    a=`head -1 $top/etc/release | sed 's/.* \([^ ]*\)$/\1/'`
+    r=`head -1 $top/etc/release | sed 's/.* \([0-9.]*\) .*/\1/'`
+# tested on:
+# Mac OS X release 10.4.9 (8P135) on powerpc (Darwin 8.9.0)
+elif [ -r /usr/bin/sw_vers ]; then
+    s=`/usr/bin/sw_vers | grep ProductName | sed 's/ProductName\:\(.*\)/\1/' | /usr/bin/tr -d "\t"`
+    if [ "$s" = "Mac OS X" ]; then
+	n=$s
+	a=`uname -p` # /usr/bin/machine is more specific: returns 'ppc7450' instead of 'ppc'
+	r=`/usr/bin/sw_vers | grep ProductVersion | sed 's/ProductVersion\:\(.*\)/\1/' | /usr/bin/tr -d "\t"`
+	b=`/usr/bin/sw_vers | grep BuildVersion | sed 's/BuildVersion\:\(.*\)/\1/' | /usr/bin/tr -d "\t"`
+	#r="$r ($b)"
+	k=`uname -sr`
+    fi
+# tested on:
+elif [ -r $top/etc/lsb-release ]; then
+    . $top/etc/lsb-release
+    [ "$DISTRIB_ID" ] && n="$DISTRIB_ID"
+    [ "$DISTRIB_RELEASE" ] && r="$DISTRIB_RELEASE"
+fi
+
+# try to guess the arch if not already set
+if [ -z "$a" ]; then
+    if [ -r $top/etc/unamei.osinfo ]; then
+	a=`cat $top/etc/unamei.osinfo`
+    else
+	a=`uname -i 2> /dev/null`
+    fi
+    if [ "$a" = unknown -o -z "$a" ]; then
+	if [ -r $top/etc/unamem.osinfo ]; then
+	    a=`cat $top/etc/unamem.osinfo`
+	else
+	    a=`uname -m 2> /dev/null`
+	fi
+    fi
+    case "$a" in
+	i?86) a=i386;;
+    esac
+fi
+
+if [ -z "$k" ]; then
+    if [ -r $top/etc/unamer.osinfo ]; then
+	k=`cat $top/etc/unamer.osinfo`
+    else
+	k=`uname -r`
+    fi
+fi
+
+# try a generic method
+if [ -z "$n" -o -z "$r" ]; then
+    f=`ls $top/etc/*-release 2>/dev/null`
+    if [ -r "$f" ]; then
+	if grep -q ' ' "$f" 2> /dev/null; then
+	    n=`sed 's/\([^0-9.]*\)\s\{1,\}[0-9.].*/\1/' < $f | sed -e 's/\(release\|version\)//' -e 's/\s*$//'`
+	    r=`sed 's/[^0-9.]*\([0-9.]*\).*/\1/' < $f`
+	else
+	    n=`basename "$f" | sed 's/-release//'`
+	    r=`cat "$f"`
+	fi
+    fi
+fi
+
+if [ -z "$a" -o -z "$n" -o -z "$r" ]; then
+    echo "Unsupported operating system" 1>&2
+    exit 1
+fi
+
+if [ $all = 1 ]; then
+    echo "$n release $r on $a ($k)"
+    exit 0
+fi
+
+if [ $name = 1 ]; then
+    echo "$n"
+fi
+
+if [ $rel = 1 ]; then
+    echo "$r"
+fi
+
+if [ $arch = 1 ]; then
+    echo "$a"
+fi
+
+if [ $knl = 1 ]; then
+    echo "$k"
+fi
+
+if [ $xml = 1 ]; then
+    cat <<EOF
+<os>
+<name>$n</name>
+<version>$r</version>
+<arch>$a</arch>
+<kernel>$k</kernel>
+</os>
+EOF
+fi
+
+# osinfo ends here

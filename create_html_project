@@ -1,0 +1,26 @@
+#!/bin/bash
+# Program:
+#   Create Web Project
+# History:
+#   2011/11/01    Jace Ju   First release
+
+project_name="$1"
+template_path="/Users/jaceju/Sites/personal/html_tpl"
+
+## Get name of project
+until [ "$project_name" != "" ]
+do
+	read -p "Please input Project Name: " project_name
+done
+
+## Exit if project exists
+if test -r "./$project_name" ; then
+	echo "Project $project_name exists."
+	exit 1
+fi
+
+## Create structure of project
+echo "Creating structure of project..."
+cp -r "$template_path" $project_name > /dev/null
+
+
