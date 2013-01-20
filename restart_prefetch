@@ -1,0 +1,5 @@
+#!/bin/bash
+pkill gearmand
+/usr/local/sbin/gearmand -d
+/Users/jaceju/.phpbrew/php/php-5.4.7/bin/php /Users/jaceju/Sites/Sina/weibo-admin/artisan prefetch_status_pic_new --env=development worker debug
+

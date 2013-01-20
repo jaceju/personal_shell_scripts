@@ -8,7 +8,7 @@ ERRMSG_WRONGDIR='You are not under octopress directory.'
 BLOGDIR=${PWD}
 
 # Deploy contents
-deploy () {
+publish () {
   bundle exec rake gen_deploy
 }
 
@@ -40,8 +40,8 @@ post () {
 
 # Main
 # ----
-actions="post update preview deploy"
-action=${1?"requirs action!, avaliable actions are ${actions}"}
+actions="post update preview publish"
+action=${1?"requires action!, avaliable actions are \"${actions}\""}
 
 # run action
 shift
