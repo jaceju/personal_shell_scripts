@@ -18,8 +18,8 @@ EOF
 chmod +x noauth.sh
 cp .ssh/id_rsa.pub _temp.pub
 scp noauth.sh _temp.pub "$ip":~/
+ssh $ip bash < noauth.sh
 rm -f noauth.sh _temp.pub
-ssh $IP bash < noauth.sh
 #ssh "$ip"
 cd -
 
