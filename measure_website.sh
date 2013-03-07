@@ -9,5 +9,5 @@ do
 done
 
 result=`$CURL -o /dev/null -s -w %{time_connect}:%{time_starttransfer}:%{time_total} "$URL"`
-echo " Time_Connect Time_startTransfer Time_total "
-echo $result | $GAWK -F: '{ print $1" "$2" "$3}'
+echo -e "connect\tstart_transfer\ttotal "
+echo -e $result | $GAWK -F: '{ print $1"s\t"$2"s\t\t"$3"s"}'
