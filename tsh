@@ -1,0 +1,7 @@
+#!/bin/bash
+hostname=$1
+until [ "$hostname" != "" ]
+do
+    read -p "Please input hostname or IP: " hostname
+done
+ssh $1 -t tmux a

@@ -8,8 +8,10 @@ cd ~
 cat > noauth.sh << EOF
 #!/bin/bash
 cd ~
-mkdir .ssh; chmod 700 .ssh
-cat _temp.pub > .ssh/authorized_keys
+if ! [ -d .ssh ]; then
+  mkdir .ssh; chmod 700 .ssh
+fi
+cat _temp.pub >> .ssh/authorized_keys
 chmod 644 .ssh/authorized_keys
 rm -f _temp.pub
 rm -f noauth.sh
@@ -22,4 +24,3 @@ ssh $ip bash < noauth.sh
 rm -f noauth.sh _temp.pub
 #ssh "$ip"
 cd -
-
