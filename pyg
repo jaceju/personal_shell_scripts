@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/local/bin/pygmentize -f rtf -O "style=native,fontface=Courier Bold" "$1" | pbcopy
+/usr/local/bin/pygmentize -f rtf -O "encoding=utf-8,style=vs,fontface=Courier Bold" "$1" | pbcopy
