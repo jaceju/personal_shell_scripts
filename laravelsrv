@@ -1,0 +1,3 @@
+#!/bin/sh
+
+php -S localhost:9999 server.php -t public/
