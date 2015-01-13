@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# brew install highlight
+pbpaste | highlight -O rtf --line-numbers --font-size 24 --font Inconsolata --style solarized-dark -W -J 50 -j 3 --syntax=$1 | pbcopy
