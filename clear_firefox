@@ -1,3 +1,0 @@
-#!/bin/sh
-rm -f Firefox\ Profile/places.sqlite 
-rm -f Firefox\ Profile/urlclassifier3.sqlite

@@ -1,2 +1,0 @@
-#!/bin/sh
-JSBIN_CONFIG=/usr/local/lib/node_modules/jsbin/config.local.json jsbin

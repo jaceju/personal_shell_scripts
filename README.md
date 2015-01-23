@@ -1,4 +1,2 @@
-personal_shell_scripts
-======================
+# System tools for personal use
 
-Don't use them.
