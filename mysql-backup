@@ -1,7 +1,7 @@
 #!/bin/bash
 ### MySQL Server Login Info ###
 MUSER="backup"
-MPASS="ZyFQV7XebVCPu6Ww"
+MPASS="password"
 MHOST="localhost"
 MYSQL="$(which mysql)"
 MYSQLDUMP="$(which mysqldump)"
@@ -14,8 +14,8 @@ NOW=$(date +"%Y%m%d")
 [ ! -d "$BAK" ] && mkdir -p "$BAK"
 
 echo "Start at " $(date +"%T")
-# DBS="$($MYSQL -u $MUSER -h $MHOST -p$MPASS -Bse 'show databases')"
-for db in "7new" #$DBS
+DBS="$($MYSQL -u $MUSER -h $MHOST -p$MPASS -Bse 'show databases')"
+for db in $DBS
 do
  FILE=$BAK/$db.$NOW.gz
  echo $FILE

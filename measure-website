@@ -1,4 +1,5 @@
 #!/bin/bash
+# brew install gawk
 CURL=$(which curl)
 GAWK=$(which gawk)
 URL=${1-}

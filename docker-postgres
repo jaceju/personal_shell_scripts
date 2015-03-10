@@ -1,0 +1,4 @@
+#!/bin/bash
+docker rm postgresql
+docker run --name postgresql -d -e 'DB_NAME=gitlabhq_production' -e 'DB_USER=gitlab' -e 'DB_PASS=password' -v /Users/jaceju/demo-server/postgresql:/var/lib/postgresql jaceju/postgresql:latest
+

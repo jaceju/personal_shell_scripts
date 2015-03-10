@@ -1,0 +1,4 @@
+#!/bin/bash
+rm -rf build
+git push origin :gh-pages
+del-tags
