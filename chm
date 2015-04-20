@@ -1,0 +1,5 @@
+#!/bin/bash
+PATTERN=${1-"."}
+TYPE=${2-"d"}
+MODE={$3-"700"}
+find $PATTERN -type {$TYPE} -exec chmod $MODE {} +
