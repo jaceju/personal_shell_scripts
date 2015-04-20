@@ -1,6 +1,7 @@
 # System tools for my self
 
 * blog: 加強 octopress
+* chm: 修改檔案或目錄權限 (PATTERN TYPE MODE)
 * cli-clean: 清掉 clitool-boilplate 的暫存檔
 * craftsman: 加強 Laravel 的 gulp
 * del-tags: 清除 git tags
