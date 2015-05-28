@@ -1,11 +1,52 @@
 #!/bin/bash
 
-BASE_PATH="/Users/jaceju/Vagrant/vagrant-phpci/assets"
+WORKPATH=`pwd`
+JAR="${WORKPATH}/selenium-server-standalone-2.45.0.jar"
+FIREFOX="/Applications/Firefox.app/Contents/MacOS/firefox"
+LOGFILE="${WORKPATH}/selenium-server.log"
+PROFILE="${WORKPATH}/profile"
+TIMEOUT=180000
 
-java -jar ${BASE_PATH}/selenium-server-standalone-2.45.0.jar \
-	-firefoxProfileTemplate ${BASE_PATH}/firefox-profile \
-	-log ${BASE_PATH}/selenium.log \
-	-hub http://127.0.0.1:4444/wd/hub
+BIN=`which java`
+NAME="Selenium Server"
+ARGS="-jar ${JAR} -firefoxProfileTemplate ${PROFILE} -timeout ${TIMEOUT} -trustAllSSLCertificates -log ${LOGFILE}"
+PIDFILE="/tmp/selenium-server.pid"
+
+case "$1" in
+  init)
+    echo "Initialing..."
+    if [ ! -f ${JAR} ]; then
+      wget http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar
+    fi
+    if [ ! -d ${PROFILE} ]; then
+      ${FIREFOX} -CreateProfile "testing ${PROFILE}"
+    fi
+    echo "Done"
+    ;;
+  start)
+    echo -ne "Starting ${NAME}: "
+    ${BIN} -jar ${JAR} -firefoxProfileTemplate ${PROFILE} -timeout ${TIMEOUT} -trustAllSSLCertificates -log ${LOGFILE} &
+    echo $! > ${PIDFILE}
+    echo " ....OK"
+    ;;
+  stop)
+    echo -ne "Stopping ${NAME}: "
+    PID=`cat ${PIDFILE}`
+    kill $PID
+    rm -f $PIDFILE
+    echo " ....OK"
+    ;;
+  restart)
+    $0 stop
+    sleep 2
+    $0 start
+    ;;
+  *)
+    echo "Usage: ${0} {start|stop|restart}"
+    exit 1
+esac
+
+exit 0
 
 
 # For Test
