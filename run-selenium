@@ -6,3 +6,16 @@ java -jar ${BASE_PATH}/selenium-server-standalone-2.45.0.jar \
 	-firefoxProfileTemplate ${BASE_PATH}/firefox-profile \
 	-log ${BASE_PATH}/selenium.log \
 	-hub http://127.0.0.1:4444/wd/hub
+
+
+# For Test
+# java -jar /vagrant/assets/selenium-server-standalone-2.45.0.jar \
+# -firefoxProfileTemplate /vagrant/assets/firefox-profile \
+# -htmlSuite *firefox http://www.google.com.com \
+# "/vagrant/assets/selenium-test/src/SeleniumTest.html" \
+# "/vagrant/assets/selenium-test/firefox-results.html"
+
+# java -jar /vagrant/assets/selenium-server-standalone-2.45.0.jar \
+# -htmlSuite *googlechrome http://www.google.com.com \
+# "/vagrant/assets/selenium-test/src/SeleniumTest.html" \
+# "/vagrant/assets/selenium-test/firefox-results.html"
