@@ -24,8 +24,9 @@ case "$1" in
     echo "Done"
     ;;
   start)
+    export PATH=/Applications/Firefox.app/Contents/MacOS/:${PATH}
     echo -ne "Starting ${NAME}: "
-    ${BIN} -jar ${JAR} -firefoxProfileTemplate ${PROFILE} -timeout ${TIMEOUT} -trustAllSSLCertificates -log ${LOGFILE} &
+    ${BIN} ${ARGS} &
     echo $! > ${PIDFILE}
     echo " ....OK"
     ;;
@@ -49,14 +50,9 @@ esac
 exit 0
 
 
-# For Test
-# java -jar /vagrant/assets/selenium-server-standalone-2.45.0.jar \
-# -firefoxProfileTemplate /vagrant/assets/firefox-profile \
-# -htmlSuite *firefox http://www.google.com.com \
-# "/vagrant/assets/selenium-test/src/SeleniumTest.html" \
-# "/vagrant/assets/selenium-test/firefox-results.html"
-
-# java -jar /vagrant/assets/selenium-server-standalone-2.45.0.jar \
-# -htmlSuite *googlechrome http://www.google.com.com \
-# "/vagrant/assets/selenium-test/src/SeleniumTest.html" \
-# "/vagrant/assets/selenium-test/firefox-results.html"
+# # For Test
+# java -jar `pwd`/selenium-server-standalone-2.45.0.jar \
+# -firefoxProfileTemplate "`pwd`/profile" \
+# -htmlSuite "*firefox" http://www.google.com.tw \
+# "`pwd`/SeleniumTest.html" \
+# "`pwd`/results.html"
