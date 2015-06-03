@@ -7,6 +7,9 @@ LOGFILE="${WORKPATH}/selenium-server.log"
 PROFILE="${WORKPATH}/profile"
 TIMEOUT=180000
 
+command -v java >/dev/null 2>&1 || { echo >&2 "I require java but it's not installed.  Aborting."; exit 1; }
+command -v brew >/dev/null 2>&1 || { echo >&2 "I require brew but it's not installed.  Aborting."; exit 1; }
+
 BIN=`which java`
 NAME="Selenium Server"
 ARGS="-jar ${JAR} -firefoxProfileTemplate ${PROFILE} -timeout ${TIMEOUT} -trustAllSSLCertificates -log ${LOGFILE}"
@@ -19,7 +22,13 @@ case "$1" in
       wget http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar
     fi
     if [ ! -d ${PROFILE} ]; then
-      ${FIREFOX} -CreateProfile "testing ${PROFILE}"
+      mkdir ${PROFILE}
+      echo '{}' > ${PROFILE}/directoryLinks.json
+      echo 'user_pref("extensions.checkCompatibility", false);' > ${PROFILE}/prefs.js
+      echo '{"created":1375337719323,"reset":1430991977669}' > ${PROFILE}/times.json
+    fi
+    if [ "" == "`command -v chromedriver`" ]; then
+      brew install chromedriver
     fi
     echo "Done"
     ;;
