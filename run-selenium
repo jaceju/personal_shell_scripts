@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKPATH=`pwd`
+WORKPATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 JAR="${WORKPATH}/selenium-server-standalone-2.45.0.jar"
 FIREFOX="/Applications/Firefox.app/Contents/MacOS/firefox"
 LOGFILE="${WORKPATH}/selenium-server.log"
