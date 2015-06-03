@@ -24,7 +24,8 @@ case "$1" in
     if [ ! -d ${PROFILE} ]; then
       mkdir ${PROFILE}
       echo '{}' > ${PROFILE}/directoryLinks.json
-      echo 'user_pref("extensions.checkCompatibility", false);' > ${PROFILE}/prefs.js
+      echo 'user_pref("extensions.checkCompatibility", false);' >> ${PROFILE}/prefs.js
+      echo 'user_pref("browser.startup.page", 0);' >> ${PROFILE}/prefs.js
       echo '{"created":1375337719323,"reset":1430991977669}' > ${PROFILE}/times.json
     fi
     if [ "" == "`command -v chromedriver`" ]; then
