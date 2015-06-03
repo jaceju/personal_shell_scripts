@@ -5,14 +5,14 @@ JAR="${WORKPATH}/selenium-server-standalone-2.45.0.jar"
 FIREFOX="/Applications/Firefox.app/Contents/MacOS/firefox"
 LOGFILE="${WORKPATH}/selenium-server.log"
 PROFILE="${WORKPATH}/profile"
-TIMEOUT=180000
 
 command -v java >/dev/null 2>&1 || { echo >&2 "I require java but it's not installed.  Aborting."; exit 1; }
 command -v brew >/dev/null 2>&1 || { echo >&2 "I require brew but it's not installed.  Aborting."; exit 1; }
+export PATH=/Applications/Firefox.app/Contents/MacOS/:${PATH}
 
 BIN=`which java`
 NAME="Selenium Server"
-ARGS="-jar ${JAR} -firefoxProfileTemplate ${PROFILE} -timeout ${TIMEOUT} -trustAllSSLCertificates -log ${LOGFILE}"
+ARGS="-jar ${JAR} -firefoxProfileTemplate ${PROFILE} -trustAllSSLCertificates -log ${LOGFILE}"
 PIDFILE="/tmp/selenium-server.pid"
 
 case "$1" in
@@ -33,7 +33,6 @@ case "$1" in
     echo "Done"
     ;;
   start)
-    export PATH=/Applications/Firefox.app/Contents/MacOS/:${PATH}
     echo -ne "Starting ${NAME}: "
     ${BIN} ${ARGS} &
     echo $! > ${PIDFILE}
