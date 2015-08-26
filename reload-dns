@@ -1,2 +1,2 @@
 #!/bin/bash
-dscacheutil -flushcache
+sudo discoveryutil udnsflushcaches

@@ -1,0 +1,4 @@
+#!/bin/bash
+IN=$1
+OUT=$2
+ffmpeg -i "${IN}.mp4" -i "${IN}.m4a" -c:v copy -c:a copy "${OUT}.mp4"
