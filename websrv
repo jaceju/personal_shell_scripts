@@ -2,5 +2,6 @@
 dir=${1-public/}
 port=${2-9999}
 router=${3-}
+echo "Start Web Server on http://localhost:${port}"
+php -S localhost:$port -t $dir $router 1>/tmp/websrv.log 2>&1 &
 open http://localhost:$port
-php -S localhost:$port -t $dir $router
