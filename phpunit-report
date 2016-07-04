@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PHPUNIT='php -d memory_limit=512M -d zend_extension=/Users/jaceju/.phpbrew/php/php-5.6.15/lib/php/extensions/no-debug-non-zts-20131226/xdebug.so -dxdebug.coverage_enable=1 ./vendor/bin/phpunit';
+TARGET=${1:-./public/builds}
+
+COMMIT=$(git rev-parse HEAD);
+REPO=$(git config --get remote.origin.url | cut -d':' -f 2 | cut -d'.' -f 1);
+TARGET="${TARGET}/${REPO}/$COMMIT";
+
+echo "Generating to ${TARGET} ...";
+mkdir -p $TARGET;
+$PHPUNIT --coverage-html=$TARGET;

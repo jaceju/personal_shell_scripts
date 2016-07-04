@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($argv[1])) {
+    die('No input file');
+}
+
+$file = $argv[1];
+
+if (!file_exists($file)) {
+    die("$file is not exist.");
+}
+
+require $file;
+
+$classes = get_declared_classes();
+$class = array_pop($classes);
+
+$reflectClass = new ReflectionClass($class);
+$methods = $reflectClass->getMethods(ReflectionMethod::IS_PUBLIC);
+/** @var ReflectionMethod $method */
+foreach ($methods as $method) {
+    echo $method->getName(), '(';
+    /** @var ReflectionParameter $parameter */
+    $params = [];
+    foreach ($method->getParameters() as $parameter) {
+        $paramString = '$' . $parameter->getName();
+        if ($parameter->isDefaultValueAvailable()) {
+            $paramString .= ' = ' . var_export($parameter->getDefaultValue(), true);
+            $paramString = preg_replace('/\n/', '', $paramString);
+            $paramString = preg_replace('/array \(\)/', '[]', $paramString);
+        }
+        $params[] = $paramString;
+    }
+    echo implode(', ', $params) . ')', "\n";
+}

@@ -1,4 +1,9 @@
 #!/bin/bash
-PORT=${1:-8000}
-echo "Processes listen in $PORT:"
-lsof -n -i4TCP:$PORT | grep LISTEN
+PORT=${1-}
+if [ "" != "$PORT" ]
+then
+  echo "Processes are listening in port $PORT"
+else
+  echo "All processes are listening"
+fi
+sudo lsof -Pni | grep LISTEN | grep ":$PORT"

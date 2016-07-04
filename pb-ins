@@ -1,0 +1,62 @@
+#!/bin/bash
+VERSION=$1
+VARIANTS=${2-}
+ALIAS=${3-}
+
+# INSTALL NAME
+if [ "$ALIAS" != "" ]
+then
+  LIKE="--name=$ALIAS"
+else
+  LIKE=""
+fi
+
+# Fix Apache compile bug
+# http://stackoverflow.com/questions/24269451/mac-os-x-php-5-4-29-compile-error-undefined-symbols-for-architecture-x86-64
+# http://stackoverflow.com/questions/26454255/error-compiling-php5-5-18-on-macosx-10-10-yosemite
+# MACOSX_DEPLOYMENT_TARGET=10.12
+# CFLAGS="-arch x86_64 -g -Os -pipe -no-cpp-precomp"
+# CCFLAGS="-arch x86_64 -g -Os -pipe"
+# CXXFLAGS="-arch x86_64 -g -Os -pipe"
+# LDFLAGS="-arch x86_64 -bind_at_load"
+# export CFLAGS CXXFLAGS LDFLAGS CCFLAGS MACOSX_DEPLOYMENT_TARGET
+
+# https://bugs.php.net/bug.php?id=60034
+# LDFLAGS="-L/usr/local/opt/openssl/lib"
+# CPPFLAGS="-I/usr/local/opt/openssl/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
+# PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+# export LDFLAGS CPPFLAGS PKG_CONFIG_PATH
+
+# http://stackoverflow.com/questions/17980759/xcode-select-active-developer-directory-error
+# sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+# 沒辦法用 Apache ，改用 fpm
+
+phpbrew --debug install $LIKE php-${VERSION} +default +mysql +fpm +opcache $VARIANTS
+phpbrew switch "${VERSION}"
+php -v
+
+# EXTENSION BRANCH
+if [ "$VERSION" \> "7.0.0" ]
+then
+  BRANCH="php7"
+else
+  BRANCH=""
+fi
+
+phpbrew ext install xdebug
+phpbrew ext install gd
+phpbrew ext install imagick
+phpbrew ext install ldap
+phpbrew ext install memcached
+phpbrew ext install memcache
+phpbrew ext install pdo_sqlite
+phpbrew ext install https://github.com/phpredis/phpredis $BRANCH
+phpbrew ext install iconv
+
+# echo -e "xdebug.remote_enable=1\n\
+# xdebug.remote_host=localhost\n\
+# xdebug.remote_port=9000\n\
+# xdebug.remote_autostart=1\n\
+# xdebug.profiler_enable=1\n\
+# xdebug.profiler_output_dir=\"/Users/jaceju/tmp/xdebug\"\n\
+# xdebug.idekey=PHPSTORM%" > ~/.phpbrew/php/php-${VERSION}/var/db/phpstorm.ini

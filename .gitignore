@@ -2,5 +2,15 @@ selenium-server-*
 sshaws
 onion
 pyrus
+token-checker
+decrypt_kc1
 git-author
+get-token
+composer.phar
+php-cs-fixer
+phpbrew
 ._*
+sy*
+del-all-containers
+del-exited-containers
+del-untagged-images

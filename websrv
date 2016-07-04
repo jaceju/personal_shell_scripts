@@ -2,6 +2,12 @@
 dir=${1-public/}
 port=${2-9999}
 router=${3-}
+if [ -e "/tmp/websrv.pid" ]
+then
+  kill `cat /tmp/websrv.pid`
+  rm -f /tmp/websrv.pid
+fi
 echo "Start Web Server on http://localhost:${port}"
 php -S localhost:$port -t $dir $router 1>/tmp/websrv.log 2>&1 &
+echo $! > /tmp/websrv.pid
 open http://localhost:$port
