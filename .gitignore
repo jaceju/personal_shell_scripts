@@ -14,3 +14,9 @@ sy*
 del-all-containers
 del-exited-containers
 del-untagged-images
+create-sid
+homeboy
+log-watcher
+run-cmd-in-io
+search-io-log
+webpack-vue.sh
