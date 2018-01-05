@@ -7,7 +7,7 @@ then
   kill `cat /tmp/websrv.pid`
   rm -f /tmp/websrv.pid
 fi
-echo "Start Web Server on http://localhost:${port}"
-php -S localhost:$port -t $dir $router 1>/tmp/websrv.log 2>&1 &
+echo "Start Web Server on http://127.0.0.1:${port}"
+php -S 0.0.0.0:$port -t $dir $router 1>/tmp/websrv.log 2>&1 &
 echo $! > /tmp/websrv.pid
-open http://localhost:$port
+open http://127.0.0.1:$port
