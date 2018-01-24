@@ -20,3 +20,4 @@ log-watcher
 run-cmd-in-io
 search-io-log
 webpack-vue.sh
+parse-sid
