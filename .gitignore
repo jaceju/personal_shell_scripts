@@ -1,3 +1,4 @@
+Cellar/
 selenium-server-*
 sshaws
 onion
@@ -21,3 +22,7 @@ run-cmd-in-io
 search-io-log
 webpack-vue.sh
 parse-sid
+blueman
+proxy
+sami
+drafter
