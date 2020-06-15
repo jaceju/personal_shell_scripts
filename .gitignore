@@ -23,7 +23,7 @@ search-io-log
 webpack-vue.sh
 parse-sid
 blueman
-proxy
+*proxy
 sami
 drafter
 azure-test-proxy
