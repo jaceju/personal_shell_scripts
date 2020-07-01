@@ -1,2 +1,0 @@
-#!/bin/bash
-`which lebab` $1 -o $1 --enable let,arrow,template

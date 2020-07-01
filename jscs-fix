@@ -1,3 +1,0 @@
-#!/bin/bash
-
-`which jscs` $1 --preset=crockford --esnext --fix
