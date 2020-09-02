@@ -1,13 +1,79 @@
 #!/bin/sh
-dir=${1-public/}
-port=${2-9999}
-router=${3-}
-if [ -e "/tmp/websrv.pid" ]
-then
-  kill `cat /tmp/websrv.pid`
-  rm -f /tmp/websrv.pid
+
+RED="\033[1;31m"
+GREEN="\033[1;32m"
+YELLOW="\033[1;33m"
+NO_COLOR="\033[0m"
+SP='  '
+
+CMD=""
+HOST="localhost"
+PORT="9999"
+DOCROOT="."
+ROUTER=""
+
+usage()
+{
+    echo "Start a PHP built-in web server"
+    echo ""
+    echo "websrv start|stop"
+    echo "\t-h --help"
+    echo "\t--host=$HOST"
+    echo "\t--port=$PORT"
+    echo "\t--docroot=$DOCROOT"
+    echo "\t--router=$ROUTER"
+    echo "${NO_COLOR}"
+}
+
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+    case $PARAM in
+        start)
+            CMD="start"
+            ;;
+        stop)
+            CMD="stop"
+            ;;
+        -h | --help)
+            usage
+            exit
+            ;;
+        --host)
+            HOST=$VALUE
+            ;;
+        --port)
+            PORT=$VALUE
+            ;;
+        --docroot)
+            DOCROOT=$VALUE
+            ;;
+        --router)
+            ROUTER=$VALUE
+            ;;
+        *)
+            echo "${RED}ERROR: unknown parameter \"$PARAM\"${NO_COLOR}"
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+stop_server()
+{
+  PID=$( pgrep -f -- "php -S 0.0.0.0" )
+  [ "$PID" ] && kill "$PID"
+}
+
+if [ "$CMD" = "stop" ]; then
+  stop_server
+elif [ "$CMD" = "start" ]; then
+  stop_server
+  echo "Start Web Server on http://127.0.0.1:${PORT}"
+  php -S 0.0.0.0:$PORT -t $DOCROOT $ROUTER 1>/tmp/websrv.log 2>&1 &
+else
+  usage
+  exit 1
 fi
-echo "Start Web Server on http://127.0.0.1:${port}"
-php -S 0.0.0.0:$port -t $dir $router 1>/tmp/websrv.log 2>&1 &
-echo $! > /tmp/websrv.pid
-open http://127.0.0.1:$port
+
